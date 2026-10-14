@@ -23,7 +23,7 @@ body::after{width:56vmax;height:56vmax;right:-22vmax;bottom:-26vmax;background:r
 h1{font-size:clamp(2.1rem,9vw,2.7rem);line-height:1;margin:0;letter-spacing:-.03em;background:linear-gradient(90deg,var(--t1),var(--t2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{color:var(--mut);margin:10px 0 24px;font-size:1.02rem}
 .card{background:var(--card);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);border:1px solid var(--line);border-radius:24px;padding:20px;margin-bottom:16px;box-shadow:0 24px 60px -32px var(--shadow)}
-.hero{margin:-4px 0 14px}.hero svg{width:100%;height:auto;display:block;overflow:visible}
+.hero{margin:0 0 26px}.hero svg{width:100%;height:auto;display:block;overflow:visible}
 .dev{fill:none;stroke:var(--acc);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .flow{fill:none;stroke:url(#hg);stroke-width:3;stroke-dasharray:3 9;stroke-linecap:round;animation:flow 1s linear infinite}
 .ring{fill:none;stroke:var(--a3);stroke-width:1.5;opacity:0;transform-box:fill-box;transform-origin:center;animation:ring 2.8s ease-out infinite}.ring.r2{animation-delay:1.4s}
@@ -90,6 +90,18 @@ footer{margin-top:30px;color:var(--mut);font-size:.86rem}
 @keyframes send{0%{opacity:.2}4%{opacity:.85}14%{opacity:.2}21%{opacity:.85}31%{opacity:.2}38%{opacity:.85}48%,100%{opacity:.2}}
 @keyframes recv{0%,50%{opacity:.2}56%{opacity:.9}66%{opacity:.2}73%{opacity:.9}83%{opacity:.2}89%{opacity:.9}99%,100%{opacity:.2}}
 @keyframes pk{0%{transform:translateX(0);opacity:0}8%{opacity:1}52%{transform:translateX(138px);opacity:1}57%{transform:translateX(142px);opacity:0}100%{transform:translateX(142px);opacity:0}}
+.stack{display:grid;gap:12px}
+.btn.big{min-height:54px;font-size:1.05rem;border-radius:16px}
+.cap{margin:0;text-align:center;color:var(--mut);font-size:.95rem}
+.copy{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:4px 4px 4px 16px}
+.copy:focus-within{outline:3px solid var(--acc);outline-offset:3px}
+.copy input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:13px ui-monospace,Menlo,Consolas,monospace;text-overflow:ellipsis}
+.copy input::placeholder{color:var(--mut)}
+.copy .btn{min-height:44px;padding:8px 18px;border-radius:12px}
+footer details{margin:0 0 4px}footer summary{display:block;text-align:center;font-weight:600}
+footer summary::after{content:" +"}footer details[open] summary::after{content:" −"}
+footer details p{margin:8px 0}
+.sub{margin-bottom:20px}
 @keyframes drift{to{transform:translate(6vmax,5vmax) scale(1.08)}}
 @keyframes flow{to{stroke-dashoffset:-24}}
 @keyframes ring{0%{transform:scale(.6);opacity:.8}100%{transform:scale(3.6);opacity:0}}
@@ -108,7 +120,7 @@ footer{margin-top:30px;color:var(--mut);font-size:.86rem}
 <h1>Airscan</h1>
 <a class="gh" id="gh" href="#" target="_blank" rel="noopener noreferrer" aria-label="Repositório no GitHub"><svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span id="gh-t">GitHub</span></a>
 </header>
-<p class="sub">Envie arquivos direto entre aparelhos. Nada vai para a nuvem.</p>
+<p class="sub">Arquivos direto entre aparelhos.</p>
 
 <section id="pair" class="card">
   <div id="s-start">
@@ -117,31 +129,23 @@ footer{margin-top:30px;color:var(--mut);font-size:.86rem}
       <g class="pc"><rect class="dev" x="224" y="34" width="70" height="46" rx="7"/><rect class="scr s2" x="230" y="40" width="58" height="34" rx="3"/><path class="dev" d="M246 98h26M259 80v18"/></g>
       <path class="flow" d="M72 66H218"/><circle class="ring" cx="145" cy="66" r="14"/><circle class="ring r2" cx="145" cy="66" r="14"/>
       <rect class="pk" x="72" y="62" width="9" height="9" rx="2.5"/><rect class="pk" style="animation-delay:.4s" x="72" y="62" width="9" height="9" rx="2.5"/><rect class="pk" style="animation-delay:.8s" x="72" y="62" width="9" height="9" rx="2.5"/></svg></div>
-    <ol class="steps"><li><b>1</b>Crie</li><li><b>2</b>Escaneie</li><li><b>3</b>Envie</li></ol>
-    <div class="row">
-      <button class="btn main grow" id="b-create">Criar conexão</button>
-      <button class="btn grow" id="b-join">Tenho um QR ou link</button>
+    <div class="stack">
+      <button class="btn main big" id="b-create">Criar conexão</button>
+      <button class="btn" id="b-join">Tenho um QR ou link</button>
     </div>
-    <label class="opt"><input type="checkbox" id="stun" checked> Permitir redes diferentes (consulta um servidor do Google só para descobrir seu endereço)</label>
-    <ul class="chips"><li>Sem nuvem</li><li>Criptografado</li><li>Arquivos grandes</li></ul>
   </div>
 
   <div id="s-host" hidden>
-    <p style="margin:0;text-align:center">Aponte a câmera do outro aparelho para o QR ou envie o link.</p>
+    <p class="cap">Escaneie com o outro aparelho</p>
     <div id="qrbox"><canvas id="qr" role="img" aria-label="QR code de conexão"></canvas></div>
-    <textarea id="link-box" readonly spellcheck="false" aria-label="Link de conexão"></textarea>
-    <div class="row">
-      <button class="btn main grow" id="c-share" hidden>Compartilhar</button>
-      <button class="btn grow" id="c-link">Copiar link</button>
-    </div>
+    <div class="copy"><input id="link-box" readonly aria-label="Link de conexão"><button class="btn" id="c-link">Copiar</button></div>
+    <button class="btn main" id="c-share" hidden style="width:100%;margin-top:10px">Compartilhar</button>
   </div>
 
   <div id="s-join" hidden>
-    <button class="btn main" id="b-scan" style="width:100%">Escanear QR com a câmera</button>
-    <div id="camwrap" hidden><i class="scan"></i><video id="cam" playsinline muted aria-label="Visualização da câmera"></video></div>
-    <p style="margin:14px 0 6px;color:var(--mut)">Ou cole o link:</p>
-    <textarea id="j-paste" spellcheck="false" aria-label="Link de conexão"></textarea>
-    <button class="btn" id="b-apply">Conectar</button>
+    <button class="btn main big" id="b-scan" style="width:100%">Escanear QR</button>
+    <div id="camwrap" hidden><i class="scan"></i><video id="cam" playsinline muted aria-label="Câmera"></video></div>
+    <div class="copy" style="margin-top:12px"><input id="j-paste" placeholder="Colar link" aria-label="Link de conexão"><button class="btn" id="b-apply">Conectar</button></div>
   </div>
 
   <div id="s-error" hidden>
@@ -153,27 +157,18 @@ footer{margin-top:30px;color:var(--mut);font-size:.86rem}
 <section id="xfer" hidden>
   <div class="card">
     <span class="badge"><i></i>Conectado</span>
-    <label class="drop" id="drop" for="pick"><svg class="up" viewBox="0 0 58 58" aria-hidden="true"><defs><linearGradient id="ug" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><circle cx="29" cy="29" r="28" fill="url(#ug)"/><path d="M29 40V19M20 27l9-9 9 9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Toque para escolher ou arraste aqui</b><span>Os dois aparelhos podem enviar</span></label>
+    <label class="drop" id="drop" for="pick"><svg class="up" viewBox="0 0 58 58" aria-hidden="true"><defs><linearGradient id="ug" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><circle cx="29" cy="29" r="28" fill="url(#ug)"/><path d="M29 40V19M20 27l9-9 9 9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Escolher arquivos</b><span>ou arraste aqui</span></label>
     <input type="file" id="pick" multiple hidden>
     <ul id="list"></ul>
-    <details><summary>Dicas</summary>
-      <p>Mantenha as duas telas abertas durante o envio. Para arquivos grandes (vários GB), receba no Chrome ou no Edge: eles gravam direto no disco, no local que você escolher.</p>
-    </details>
-  </div>
+    </div>
 </section>
 <p id="status" role="status" aria-live="polite"></p>
-<details><summary>Como funciona</summary>
-  <p>Os dois aparelhos se conectam direto, de navegador a navegador (WebRTC). Para se encontrarem, trocam uma mensagem criptografada por um serviço público; a chave vai só no link. Depois disso, os arquivos seguem direto entre os aparelhos.</p>
-  <p>Em redes diferentes, o navegador consulta um servidor do Google só para descobrir o endereço público (STUN). Se a rede bloquear conexões diretas, a conexão pode falhar.</p>
-  <p>Em arquivos grandes, receba no Chrome ou no Edge: eles gravam direto no disco.</p>
-</details>
 <footer>
-  <p class="fp"><svg class="ico s" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Seus arquivos vão direto entre os aparelhos e não passam por nenhum servidor.</span></p>
   <div class="fb">
     <p>© <span id="year">2026</span> Airscan</p>
     <nav class="fn" aria-label="Links do projeto">
-      <a class="fl" id="f-lic" href="#" target="_blank" rel="noopener noreferrer"><svg class="ico s" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M7 20.5h10M4.5 6.5h15"/><path d="M4.5 6.5 1.8 13a2.9 2.9 0 0 0 5.4 0zM19.5 6.5 16.8 13a2.9 2.9 0 0 0 5.4 0z"/></svg>Licença MIT</a>
-      <a class="fl" id="f-gh" href="#" target="_blank" rel="noopener noreferrer"><svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Código-fonte</a>
+      <a class="fl" id="f-lic" href="#" target="_blank" rel="noopener noreferrer"><svg class="ico s" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M7 20.5h10M4.5 6.5h15"/><path d="M4.5 6.5 1.8 13a2.9 2.9 0 0 0 5.4 0zM19.5 6.5 16.8 13a2.9 2.9 0 0 0 5.4 0z"/></svg>MIT</a>
+      <a class="fl" id="f-gh" href="#" target="_blank" rel="noopener noreferrer"><svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
     </nav>
   </div>
 </footer>
@@ -12585,19 +12580,19 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 (()=>{
 'use strict';
 const T={
- unsupported:'Este navegador não tem os recursos necessários. Use uma versão recente do Chrome, Edge, Firefox ou Safari (em HTTPS).',
- failed:'Não foi possível conectar. Tente na mesma rede Wi-Fi ou desligue VPN e rede corporativa.',
- preparing:'Preparando conexão…',waiting:'Aguardando o outro aparelho abrir o link…',
- signalDown:'Servidor de troca indisponível no momento. Tente de novo em instantes.',
- searching:'Procurando a conexão…',badLink:'Link inválido. Cole o link completo, inclusive a parte depois do #.',
- invalid:'Link inválido.',connecting:'Conectando…',notFound:'Conexão não encontrada. O link pode ter expirado: peça outro.',
- connected:'Conectado. Mantenha as duas telas abertas durante o envio.',closed:'A conexão foi encerrada. Toque em Reconectar para criar outra.',
- noConn:'Sem conexão.',noCamera:'Sem acesso à câmera. Cole o link no campo abaixo.',
- copyFail:'Não foi possível copiar. Selecione o texto e copie manualmente.',copied:'Copiado',
- sending:'enviando',receiving:'recebendo',waitYou:'aguardando você',waitPeer:'aguardando o outro aparelho',refused:'recusado',
- failedItem:'falhou',waitAck:'aguardando confirmação',delivered:'entregue',saved:'salvo no disco',received:'recebido',
+ unsupported:'Navegador não compatível. Use o Chrome, Edge, Firefox ou Safari atualizado.',
+ failed:'Não foi possível conectar. Tente na mesma rede Wi-Fi.',
+ preparing:'Preparando…',waiting:'Aguardando o outro aparelho…',
+ signalDown:'Servidor indisponível. Tente de novo.',
+ searching:'Procurando a conexão…',badLink:'Link inválido.',
+ invalid:'Link inválido.',connecting:'Conectando…',notFound:'Link expirado. Peça outro.',
+ connected:'Conectado. Mantenha as telas abertas.',closed:'Conexão encerrada.',
+ noConn:'Sem conexão.',noCamera:'Câmera indisponível. Cole o link.',
+ copyFail:'Não foi possível copiar.',copied:'Copiado',
+ sending:'enviando',receiving:'recebendo',waitYou:'aguardando você',waitPeer:'aguardando',refused:'recusado',
+ failedItem:'falhou',waitAck:'confirmando',delivered:'entregue',saved:'salvo',received:'recebido',
  saveAs:'Salvar em…',refuse:'Recusar',download:'Baixar',left:'restam',
- bigWarn:'Este navegador pode não aguentar um arquivo tão grande. Se falhar, receba no Chrome ou no Edge.'
+ bigWarn:'Pode falhar neste navegador. Prefira Chrome ou Edge.'
 };
 /* Servidor público só para trocar a conexão (mensagens criptografadas). Pode ser trocado por um seu (ntfy). */
 const SIGNAL='https://ntfy.sh/';
@@ -12657,7 +12652,7 @@ function listen(r,key){
 
 /* ---------- conexão ---------- */
 function newPeer(){
-  pc=new RTCPeerConnection({iceServers:$('stun').checked?[{urls:'stun:stun.l.google.com:19302'}]:[]});
+  pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
   pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed')fail(T.failed)};
 }
 const gathered=()=>new Promise(res=>{
