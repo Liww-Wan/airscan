@@ -73,12 +73,6 @@ li.done .bar i::after{display:none}
 .meta{color:var(--mut);font-size:.88rem}.meta.warn{color:var(--ink);font-weight:600}
 details{color:var(--mut);font-size:.92rem;margin-top:14px}details p{margin:8px 0}summary{cursor:pointer;padding:6px 0}
 footer{color:var(--mut);font-size:.85rem;text-align:center;margin-top:26px}
-.phone,.pc{transform-box:fill-box;transform-origin:center;animation:float 3.4s ease-in-out infinite}.pc{animation-delay:-1.7s}
-.scr{opacity:.2}.s1{fill:var(--a1);animation:send 2.4s linear infinite}.s2{fill:var(--a3);animation:recv 2.4s linear infinite}
-.pk{fill:var(--a3);opacity:0;filter:drop-shadow(0 0 4px var(--a3));animation:pk 2.4s ease-in-out infinite}
-@keyframes send{0%{opacity:.2}4%{opacity:.85}14%{opacity:.2}21%{opacity:.85}31%{opacity:.2}38%{opacity:.85}48%,100%{opacity:.2}}
-@keyframes recv{0%,50%{opacity:.2}56%{opacity:.9}66%{opacity:.2}73%{opacity:.9}83%{opacity:.2}89%{opacity:.9}99%,100%{opacity:.2}}
-@keyframes pk{0%{transform:translateX(0);opacity:0}8%{opacity:1}52%{transform:translateX(138px);opacity:1}57%{transform:translateX(142px);opacity:0}100%{transform:translateX(142px);opacity:0}}
 @keyframes drift{to{transform:translate(6vmax,5vmax) scale(1.08)}}
 @keyframes flow{to{stroke-dashoffset:-24}}
 @keyframes ring{0%{transform:scale(.6);opacity:.8}100%{transform:scale(3.6);opacity:0}}
@@ -101,10 +95,9 @@ footer{color:var(--mut);font-size:.85rem;text-align:center;margin-top:26px}
 <section id="pair" class="card">
   <div id="s-start">
     <div class="hero" aria-hidden="true"><svg viewBox="0 0 320 130"><defs><linearGradient id="hg" gradientUnits="userSpaceOnUse" x1="72" y1="0" x2="218" y2="0"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
-      <g class="phone"><rect class="dev" x="26" y="30" width="40" height="72" rx="10"/><rect class="scr s1" x="32" y="39" width="28" height="46" rx="5"/><path class="dev" d="M40 94h12"/></g>
-      <g class="pc"><rect class="dev" x="224" y="34" width="70" height="46" rx="7"/><rect class="scr s2" x="230" y="40" width="58" height="34" rx="3"/><path class="dev" d="M246 98h26M259 80v18"/></g>
-      <path class="flow" d="M72 66H218"/><circle class="ring" cx="145" cy="66" r="14"/><circle class="ring r2" cx="145" cy="66" r="14"/>
-      <rect class="pk" x="72" y="62" width="9" height="9" rx="2.5"/><rect class="pk" style="animation-delay:.4s" x="72" y="62" width="9" height="9" rx="2.5"/><rect class="pk" style="animation-delay:.8s" x="72" y="62" width="9" height="9" rx="2.5"/></svg></div>
+      <rect class="dev" x="26" y="30" width="40" height="72" rx="10"/><path class="dev" d="M40 93h12"/>
+      <rect class="dev" x="224" y="34" width="70" height="46" rx="7"/><path class="dev" d="M246 98h26M259 80v18"/>
+      <path class="flow" d="M72 66H218"/><circle class="ring" cx="145" cy="66" r="14"/><circle class="ring r2" cx="145" cy="66" r="14"/><circle class="node" cx="145" cy="66" r="7"/></svg></div>
     <ol class="steps"><li><b>1</b>Crie</li><li><b>2</b>Escaneie</li><li><b>3</b>Envie</li></ol>
     <div class="row">
       <button class="btn main grow" id="b-create">Criar conexão</button>
