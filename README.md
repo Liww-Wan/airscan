@@ -1,32 +1,32 @@
-# Passe
+# Airscan
 
-Envio de arquivos entre aparelhos, de navegador a navegador (WebRTC), por link. Os arquivos não passam por servidor nem nuvem.
+Envio de arquivos grandes entre aparelhos, direto de navegador a navegador (WebRTC), sem nuvem. O pareamento é feito por QR code ou link.
 
 ## Publicar no GitHub Pages
 
 1. Crie um repositório público no GitHub e envie o `index.html` para a raiz.
 2. Em **Settings → Pages**, escolha **Deploy from a branch**, branch `main`, pasta `/ (root)`.
-3. Abra `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/`.
-
-O site precisa estar em HTTPS (o GitHub Pages já está).
+3. Abra `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/` (precisa de HTTPS, que o GitHub Pages já oferece).
 
 ## Como usar
 
-1. No aparelho A, toque em **Criar link de conexão** e envie o link ao aparelho B (WhatsApp, e-mail etc.).
-2. No aparelho B, abra o link. A conexão é feita sozinha. Se preferir, abra o site e cole o link em **Tenho um link**.
+1. No aparelho A, toque em **Criar conexão**. Aparecem um QR e um link.
+2. No aparelho B, aponte a câmera para o QR (ou use **Tenho um QR ou link** e **Escanear QR com a câmera**), ou cole o link.
 3. Conectados, os dois lados podem enviar arquivos. Mantenha as duas telas abertas.
+4. Se a conexão cair, toque em **Reconectar** para criar uma nova.
 
-O link vale enquanto a página do aparelho A estiver aberta e serve para uma única conexão.
+## Arquivos grandes
 
-## Arquivos grandes (mais de 4 GB)
-
-- O envio lê o arquivo em pedaços, então o tamanho não é limitado pelo remetente.
-- No **Chrome e no Edge** (PC e Android recente), arquivos de 256 MB ou mais mostram o botão **Salvar em…**: o arquivo é gravado direto no disco, no local escolhido.
-- Nos demais navegadores, o arquivo vai para o armazenamento privado do navegador, se houver suporte, ou para a memória. Para arquivos de vários GB, receba no Chrome ou no Edge.
+- No Chrome e no Edge, arquivos a partir de 256 MB mostram **Salvar em…** e são gravados direto no disco.
+- Em outros navegadores, o arquivo vai para o armazenamento privado do navegador ou para a memória. Para vários GB, receba no Chrome ou no Edge.
 
 ## Privacidade e limites
 
-- Para o link funcionar, os dois aparelhos trocam a conexão por um servidor público (ntfy.sh, definido na constante `SIGNAL` no início do script). Passam só mensagens criptografadas com AES-GCM; a chave fica na parte do link depois do `#`, que o navegador não envia a servidor algum. O arquivo nunca passa por ele. Se esse serviço estiver fora do ar, a conexão não é feita.
-- Para trocar o serviço, aponte `SIGNAL` para seu próprio servidor ntfy.
-- Com a opção de redes diferentes ligada, o navegador consulta um servidor STUN do Google apenas para descobrir o endereço público.
-- Não há servidor TURN: em redes que bloqueiam conexão direta, a conexão pode falhar. Na mesma rede Wi-Fi funciona na maioria dos casos.
+- Para os aparelhos se encontrarem, a conexão é trocada por um serviço público (ntfy.sh, constante `SIGNAL` no início do script) com mensagens criptografadas (AES-GCM). A chave fica após o `#` do link, que o navegador não envia a servidor algum. Os arquivos nunca passam por ele.
+- Com a opção de redes diferentes ligada, o navegador consulta um servidor STUN do Google só para descobrir o endereço público.
+- Não há servidor TURN: redes que bloqueiam conexão direta podem impedir a conexão.
+- Todo o texto da interface está na constante `T` no início do script (os textos fixos da página ficam no HTML).
+
+## Licenças
+
+Embute `qrcode-generator` (MIT) e `jsQR` (Apache-2.0).
