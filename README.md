@@ -30,3 +30,9 @@ Envio de arquivos grandes entre aparelhos, direto de navegador a navegador (WebR
 ## Licenças
 
 Embute `qrcode-generator` (MIT) e `jsQR` (Apache-2.0).
+
+## Repositório e licença
+
+- O botão do GitHub no topo e os links do rodapé apontam para o repositório. No GitHub Pages o endereço é detectado sozinho; em outro domínio, edite a constante `REPO` no início do script.
+- O ano do rodapé é atualizado automaticamente.
+- O projeto usa a licença MIT (arquivo `LICENSE`). O ícone do GitHub vem do conjunto Octicons (MIT).
