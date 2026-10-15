@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Airscan — Documentação técnica</title>
+<meta name="description" content="Como o Airscan funciona: pareamento por WebRTC, criptografia, protocolo do canal de dados, armazenamento e limites.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --ink:#14161a; --muted:#6b707b; --line:#dfe2e8;
+  --accent:#2a55f5; --code:#eceef3; --warn:#9a5b00; --warnbg:#fff6e5;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d0e11; --surface:#15171b; --ink:#eceef2; --muted:#8b909b; --line:#262a31;
+    --accent:#7d9bff; --code:#1b1e24; --warn:#f2b45a; --warnbg:#231c10; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d0e11; --surface:#15171b; --ink:#eceef2; --muted:#8b909b; --line:#262a31;
+  --accent:#7d9bff; --code:#1b1e24; --warn:#f2b45a; --warnbg:#231c10; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.65;font-size:16px}
+.wrap{max-width:740px;margin:0 auto;padding:28px 24px 24px}
+header{display:flex;align-items:center;gap:11px;font-weight:600;font-size:17px;letter-spacing:-.01em}
+.logo{width:26px;height:26px;flex:none;background:var(--accent);-webkit-mask:url("data:image/png;base64,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") center/contain no-repeat;mask:url("data:image/png;base64,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") center/contain no-repeat}
+header .sep{color:var(--line);font-weight:400}
+header .doc{color:var(--muted);font-weight:500}
+header a.back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+header a.back:hover{color:var(--ink)}
+.hero{padding:52px 0 28px;border-bottom:1px solid var(--line)}
+h1{font-size:clamp(30px,7vw,42px);line-height:1.08;letter-spacing:-.03em;font-weight:600;margin:0 0 14px;text-wrap:balance}
+.lead{margin:0;color:var(--muted);font-size:17px;max-width:58ch}
+nav.toc{margin:28px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+nav.toc a{font-size:14px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+nav.toc a:hover{color:var(--ink);border-color:var(--muted)}
+section{padding:40px 0 4px}
+h2{font-size:24px;letter-spacing:-.02em;line-height:1.2;font-weight:600;margin:0 0 14px}
+h3{font-size:16px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin:0 0 6px}
+li::marker{color:var(--muted)}
+a{color:var(--accent)}
+code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.88em;background:var(--code);padding:.12em .4em;border-radius:6px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;margin:0 0 18px;font-size:13.5px;line-height:1.6}
+pre code{background:none;padding:0;font-size:inherit}
+.tbl{overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted);font-size:13px;background:var(--surface)}
+tr:last-child td{border-bottom:0}
+.note{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;margin:0 0 18px;font-size:15px}
+.note.warn{border-color:var(--warn);background:var(--warnbg)}
+.note b{font-weight:600}
+figure{margin:0 0 22px;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px}
+figure svg{width:100%;height:auto;display:block;color:var(--ink)}
+figcaption{color:var(--muted);font-size:13.5px;padding:6px 6px 2px}
+.st{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.mu{stroke:var(--muted)}
+.fl{fill:none;stroke:var(--accent);stroke-width:3;stroke-dasharray:.01 10;stroke-linecap:round;animation:flow .9s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-10}}
+svg text{font-family:inherit;font-size:13px;fill:currentColor}
+svg text.m{fill:var(--muted);font-size:12px}
+footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 16px;font-size:14px;line-height:1;color:var(--muted);margin-top:48px; padding-top:20px;border-top:1px solid var(--line)}
+footer nav{display:contents}
+footer a{color:inherit;text-decoration:none}
+footer a:hover{color:var(--ink)}
+footer .fi{min-height:32px}
+.fi{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.fi svg{height:15px;width:auto;flex:none;fill:currentColor}
+@media (max-width:400px){footer{font-size:13px}.fi{gap:6px}}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="logo" aria-hidden="true"></span>
+    <span>Airscan</span><span class="sep">/</span><span class="doc">Documentação</span>
+    <a class="back" href="./">← Voltar ao app</a>
+  </header>
+
+  <div class="hero">
+    <h1>Documentação técnica</h1>
+    <p class="lead">O Airscan envia arquivos de um navegador direto para outro, por WebRTC. Não existe servidor de arquivos: os dados viajam pelo canal P2P, e um serviço público só ajuda os dois aparelhos a se encontrarem.</p>
+    <nav class="toc" aria-label="Seções">
+      <a href="#arquitetura">Arquitetura</a><a href="#pareamento">Pareamento</a><a href="#criptografia">Criptografia</a><a href="#protocolo">Protocolo</a><a href="#envio">Envio</a><a href="#recebimento">Recebimento</a><a href="#requisitos">Requisitos</a><a href="#seguranca">Segurança</a><a href="#config">Configuração</a><a href="#limites">Limites</a><a href="#licencas">Licenças</a>
+    </nav>
+  </div>
+
+  <section id="arquitetura">
+    <h2>Arquitetura</h2>
+    <p>O app é um único <code>index.html</code>, com CSS e JavaScript embutidos e sem etapa de build. Roda em qualquer hospedagem estática com HTTPS, como o GitHub Pages.</p>
+    <figure>
+      <svg viewBox="0 0 560 210" role="img" aria-label="Diagrama: dois aparelhos trocam mensagens cifradas pelo ntfy e os arquivos pelo canal direto WebRTC">
+        <rect class="st" x="215" y="14" width="130" height="50" rx="10"/>
+        <text x="280" y="36" text-anchor="middle">ntfy.sh</text>
+        <text class="m" x="280" y="53" text-anchor="middle">sinalização</text>
+        <rect class="st" x="14" y="120" width="130" height="62" rx="10"/>
+        <text x="79" y="146" text-anchor="middle">Aparelho A</text>
+        <text class="m" x="79" y="164" text-anchor="middle">cria a conexão</text>
+        <rect class="st" x="416" y="120" width="130" height="62" rx="10"/>
+        <text x="481" y="146" text-anchor="middle">Aparelho B</text>
+        <text class="m" x="481" y="164" text-anchor="middle">entra pelo link</text>
+        <path class="st mu" d="M100 120 L230 64" stroke-dasharray="4 5"/>
+        <path class="st mu" d="M460 120 L330 64" stroke-dasharray="4 5"/>
+        <text class="m" x="116" y="86" text-anchor="middle">SDP cifrado</text>
+        <text class="m" x="444" y="86" text-anchor="middle">SDP cifrado</text>
+        <path class="fl" d="M156 151 H404"/>
+        <text x="280" y="143" text-anchor="middle">arquivos (WebRTC)</text>
+        <text class="m" x="280" y="176" text-anchor="middle">direto, sem passar pelo servidor</text>
+      </svg>
+      <figcaption>As linhas tracejadas existem só durante o pareamento. Depois disso, tudo passa pela linha direta.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th>Peça</th><th>Função</th></tr>
+      <tr><td>Interface</td><td>HTML, CSS e JS puro. Textos da interface na constante <code>T</code>.</td></tr>
+      <tr><td>Sinalização</td><td>Tópico no <code>ntfy.sh</code> (constante <code>SIGNAL</code>) para trocar a oferta e a resposta WebRTC.</td></tr>
+      <tr><td>STUN</td><td><code>stun:stun.l.google.com:19302</code>, só para descobrir o endereço público.</td></tr>
+      <tr><td>Canal de dados</td><td><code>RTCDataChannel</code> chamado <code>arquivos</code>, binário e confiável.</td></tr>
+      <tr><td>Armazenamento</td><td>File System Access API, OPFS ou memória, conforme o navegador e o tamanho.</td></tr>
+    </table></div>
+  </section>
+
+  <section id="pareamento">
+    <h2>Pareamento</h2>
+    <p>Dois aparelhos precisam trocar uma oferta e uma resposta SDP antes de abrir o canal direto. O Airscan faz essa troca por um tópico do ntfy, sempre com o conteúdo cifrado.</p>
+    <ol>
+      <li><b>A</b> cria o <code>RTCPeerConnection</code> com o STUN e o canal <code>arquivos</code>, gera a oferta e espera a coleta de candidatos ICE (no máximo 4 s).</li>
+      <li><b>A</b> sorteia uma sala (10 caracteres base36) e uma chave AES de 16 bytes. Monta <code>"O" + SDP</code>, comprime, cifra e publica em <code>https://ntfy.sh/passe-&lt;sala&gt;</code>.</li>
+      <li><b>A</b> exibe o link e o QR com a sala e a chave, e passa a escutar o tópico por SSE (<code>/sse</code>).</li>
+      <li><b>B</b> abre o link, lê o QR ou cola o texto. Busca as mensagens da sala (<code>/json?poll=1&amp;since=all</code>), com até 8 tentativas a cada 1,5 s.</li>
+      <li><b>B</b> decifra a oferta, cria a resposta e publica <code>"A" + SDP</code> cifrado no mesmo tópico.</li>
+      <li><b>A</b> recebe a resposta pelo SSE e aplica <code>setRemoteDescription</code>. O canal abre, o SSE é fechado e os dois lados mostram a tela de transferência.</li>
+    </ol>
+    <p>Ao abrir um link, o app lê o fragmento e o remove da barra de endereços com <code>history.replaceState</code>.</p>
+    <h3>SDP enxuto</h3>
+    <p>Antes de cifrar, o SDP perde linhas que não são necessárias, o que reduz o tamanho da mensagem: candidatos TCP, candidatos IPv6 <code>fe80</code> (link-local), <code>ice-options</code>, <code>msid-semantic</code> e <code>extmap-allow-mixed</code>.</p>
+    <h3>Formato do link</h3>
+<pre><code>https://usuario.github.io/airscan/#r=&lt;sala&gt;&amp;k=&lt;chave&gt;</code></pre>
+    <div class="tbl"><table>
+      <tr><th>Parâmetro</th><th>Conteúdo</th></tr>
+      <tr><td><code>r</code></td><td>Sala: 10 caracteres base36 aleatórios. O tópico do ntfy é <code>passe-&lt;r&gt;</code>.</td></tr>
+      <tr><td><code>k</code></td><td>Chave AES-GCM de 16 bytes em base64url.</td></tr>
+    </table></div>
+    <p>Como o SDP vai pelo ntfy e não pelo QR, o QR carrega só esse link curto. Ele é gerado com <code>qrcode-generator</code> (correção de erro nível L, modo Byte, margem de 4 módulos) e lido pela câmera com <code>jsQR</code>.</p>
+  </section>
+
+  <section id="criptografia">
+    <h2>Criptografia</h2>
+    <p>Cada mensagem de sinalização passa por três etapas, nesta ordem:</p>
+    <ol>
+      <li><b>Compressão:</b> <code>CompressionStream('deflate-raw')</code>.</li>
+      <li><b>Cifra:</b> AES-GCM via <code>crypto.subtle</code>, com IV aleatório de 12 bytes.</li>
+      <li><b>Codificação:</b> <code>IV ‖ texto cifrado</code> em base64url, sem preenchimento.</li>
+    </ol>
+<pre><code>mensagem = base64url( IV[12] ‖ AES-GCM( deflate-raw( "O"|"A" + SDP ) ) )</code></pre>
+    <p>O prefixo <code>O</code> marca a oferta e <code>A</code> marca a resposta. O dado entre dois aparelhos já conectados é protegido pelo DTLS do próprio WebRTC.</p>
+  </section>
+
+  <section id="protocolo">
+    <h2>Protocolo do canal de dados</h2>
+    <p>O canal mistura mensagens de controle em JSON (texto) e pedaços do arquivo em binário (<code>ArrayBuffer</code>). Cada arquivo tem um <code>id</code> no formato <code>timestamp-aleatório</code>.</p>
+    <div class="tbl"><table>
+      <tr><th>Mensagem</th><th>Sentido</th><th>Campos</th><th>Função</th></tr>
+      <tr><td><code>meta</code></td><td>origem → destino</td><td><code>id, name, size, type</code></td><td>Anuncia o arquivo.</td></tr>
+      <tr><td><code>go</code> / <code>skip</code></td><td>destino → origem</td><td><code>id</code></td><td>Aceita ou recusa o recebimento.</td></tr>
+      <tr><td>binário</td><td>origem → destino</td><td>até 64 KiB</td><td>Pedaços sequenciais do arquivo.</td></tr>
+      <tr><td><code>end</code></td><td>origem → destino</td><td><code>id</code></td><td>Marca o fim dos dados.</td></tr>
+      <tr><td><code>ack</code></td><td>destino → origem</td><td><code>id</code></td><td>Confirma que o arquivo foi gravado.</td></tr>
+    </table></div>
+<pre><code>origem                         destino
+  ── meta ─────────────────────▶
+  ◀──────────────── go | skip ──
+  ── binário × N ──────────────▶
+  ── end ──────────────────────▶
+  ◀───────────────────── ack ───</code></pre>
+    <p>As mensagens são processadas em ordem, por uma fila de promessas no destino. Os envios também são enfileirados, então os arquivos escolhidos seguem um de cada vez.</p>
+  </section>
+
+  <section id="envio">
+    <h2>Envio</h2>
+    <ul>
+      <li><b>Tamanho do pedaço:</b> <code>CH = min(65536, pc.sctp.maxMessageSize)</code>, ou 16384 quando o navegador não informa o limite.</li>
+      <li><b>Leitura:</b> o arquivo é lido com <code>File.slice</code> em blocos de <code>CH × 16</code> (1 MiB com o padrão), nunca inteiro na memória.</li>
+      <li><b>Controle de fluxo:</b> <code>bufferedAmountLowThreshold</code> em 1 MiB. Se <code>bufferedAmount</code> passar de 8 MiB, o envio espera o evento <code>bufferedamountlow</code>.</li>
+      <li><b>Progresso:</b> bytes enviados menos o que ainda está no buffer. Velocidade e tempo restante são calculados no cliente, com a tela atualizada a cada 150 ms.</li>
+      <li><b>Estados:</b> aguardando, enviando, confirmando, entregue, recusado ou falhou.</li>
+    </ul>
+  </section>
+
+  <section id="recebimento">
+    <h2>Recebimento</h2>
+    <p>O destino escolhe como gravar de acordo com o tamanho do arquivo e os recursos do navegador.</p>
+    <div class="tbl"><table>
+      <tr><th>Situação</th><th>Como grava</th><th>Resultado</th></tr>
+      <tr><td>Arquivo ≥ 256 MiB com <code>showSaveFilePicker</code> (Chrome e Edge)</td><td>Mostra <b>Salvar em…</b> e <b>Recusar</b>. Grava em fluxo no arquivo escolhido.</td><td>Salvo direto no disco.</td></tr>
+      <tr><td>Demais casos com OPFS</td><td>Cria <code>rx-&lt;id&gt;</code> no armazenamento privado do site com <code>createWritable()</code>.</td><td>Botão <b>Baixar</b> ao final.</td></tr>
+      <tr><td>Sem OPFS</td><td>Acumula os pedaços na memória e monta um <code>Blob</code>.</td><td>Botão <b>Baixar</b>. Acima de 1,5 GiB aparece um aviso.</td></tr>
+    </table></div>
+    <p>Ao abrir o app, os arquivos <code>rx-*</code> que sobraram de sessões anteriores são removidos do armazenamento privado.</p>
+    <div class="note warn"><b>Arquivos de vários GB:</b> receba no Chrome ou no Edge. Nos outros navegadores o arquivo passa pelo OPFS ou pela memória, e isso pode falhar.</div>
+  </section>
+
+  <section id="requisitos">
+    <h2>Requisitos</h2>
+    <p>Obrigatórios: <code>RTCPeerConnection</code>, <code>CompressionStream</code> e <code>crypto.subtle</code> (que exige HTTPS). Sem eles, o app mostra "Navegador não compatível".</p>
+    <div class="tbl"><table>
+      <tr><th>Recurso opcional</th><th>Usado para</th></tr>
+      <tr><td><code>getUserMedia</code></td><td>Escanear o QR com a câmera.</td></tr>
+      <tr><td><code>navigator.share</code></td><td>Botão Compartilhar no aparelho que cria a conexão.</td></tr>
+      <tr><td><code>navigator.wakeLock</code></td><td>Manter a tela ligada durante a transferência.</td></tr>
+      <tr><td><code>showSaveFilePicker</code></td><td>Gravar arquivos grandes direto no disco.</td></tr>
+      <tr><td>OPFS</td><td>Armazenamento temporário em disco para o recebimento.</td></tr>
+    </table></div>
+    <p>Com um canal aberto, fechar ou recarregar a aba durante uma transferência dispara o aviso do navegador. Se o canal cair, o app mostra "Conexão encerrada." e o botão <b>Reconectar</b> cria uma nova conexão.</p>
+  </section>
+
+  <section id="seguranca">
+    <h2>Segurança e privacidade</h2>
+    <ul>
+      <li>Os arquivos nunca passam pelo ntfy nem por outro servidor. Ele recebe apenas mensagens de sinalização cifradas.</li>
+      <li>A chave fica no fragmento do link (depois do <code>#</code>), que o navegador não envia a servidor algum.</li>
+      <li>O ntfy enxerga o nome da sala, o tamanho e o horário das mensagens, mas não o conteúdo.</li>
+      <li>O STUN do Google vê o endereço IP de quem pergunta, para devolver o endereço público.</li>
+      <li>O link funciona como segredo: quem o tiver pode tentar parear. Compartilhe só com quem você confia e não publique o link nem o QR.</li>
+    </ul>
+  </section>
+
+  <section id="config">
+    <h2>Configuração</h2>
+    <p>Os valores ficam no início do script.</p>
+    <div class="tbl"><table>
+      <tr><th>Constante</th><th>Padrão</th><th>Função</th></tr>
+      <tr><td><code>SIGNAL</code></td><td><code>https://ntfy.sh/</code></td><td>Servidor de sinalização. Pode apontar para um ntfy seu.</td></tr>
+      <tr><td><code>REPO</code></td><td>detectado no GitHub Pages</td><td>Endereço do repositório nos links do rodapé.</td></tr>
+      <tr><td><code>BIG</code></td><td><code>256 &lt;&lt; 20</code></td><td>Tamanho a partir do qual o destino pergunta onde salvar.</td></tr>
+      <tr><td><code>HIGH</code></td><td><code>8 &lt;&lt; 20</code></td><td>Limite do buffer de envio antes de esperar o esvaziamento.</td></tr>
+      <tr><td><code>T</code></td><td>textos em português</td><td>Todas as mensagens da interface.</td></tr>
+    </table></div>
+    <h3>Publicar</h3>
+    <ol>
+      <li>Envie <code>index.html</code>, <code>docs.html</code> e <code>LICENSE</code> para a raiz de um repositório público.</li>
+      <li>Em <b>Settings → Pages</b>, escolha <b>Deploy from a branch</b>, branch <code>main</code>, pasta <code>/ (root)</code>.</li>
+      <li>Abra <code>https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/</code>.</li>
+    </ol>
+  </section>
+
+  <section id="limites">
+    <h2>Limites conhecidos</h2>
+    <div class="tbl"><table>
+      <tr><th>Limite</th><th>Detalhe</th></tr>
+      <tr><td>Sem servidor TURN</td><td>Redes que bloqueiam conexão direta (isolamento de clientes no Wi-Fi, alguns CGNAT e firewalls) podem impedir o pareamento. Tente os dois aparelhos na mesma rede.</td></tr>
+      <tr><td>Telas abertas</td><td>Os dois aparelhos precisam manter o Airscan aberto até o fim.</td></tr>
+      <tr><td>Sem retomada</td><td>Se a conexão cair no meio, o arquivo é reenviado do início.</td></tr>
+      <tr><td>Um arquivo por vez</td><td>Os arquivos de uma seleção são enviados em fila, e o destino recebe um de cada vez.</td></tr>
+      <tr><td>Disponibilidade do ntfy</td><td>Se o serviço estiver fora, o pareamento falha com "Servidor indisponível". Um servidor próprio resolve.</td></tr>
+    </table></div>
+  </section>
+
+  <section id="licencas">
+    <h2>Licenças</h2>
+    <p>O Airscan usa a licença MIT. O arquivo embute estes componentes:</p>
+    <ul>
+      <li><code>qrcode-generator</code>, de Kazuhiko Arase (MIT).</li>
+      <li><code>jsQR</code>, de Cosmo Wolfe (Apache-2.0).</li>
+      <li>Ícones do <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome Free</a> (CC BY 4.0).</li>
+      <li>Ícone do GitHub do conjunto Octicons (MIT).</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span class="fi"><svg viewBox="0 0 640 512" aria-hidden="true"><path d="M384 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L398.4 96c-5.2 25.8-22.9 47.1-46.4 57.3l0 294.7 160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-384 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0 0-294.7c-23.5-10.3-41.2-31.6-46.4-57.3L128 96c-17.7 0-32-14.3-32-32s14.3-32 32-32l128 0c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288L584.4 320 512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1-10.8 44.8-63.1 78.9-126 78.9zM126.8 195.8L54.4 320 199.3 320 126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1-10.8 44.8-63.1 78.9-126 78.9S11.7 382 .9 337.1z"/></svg>Licença MIT</span>
+    <nav>
+      <a href="https://github.com/liww-wan/airscan" target="_blank" rel="noopener" class="fi"><svg viewBox="0 0 512 512" aria-hidden="true"><path d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5l0 52C323 491.5 335.5 500 350.5 494 441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5l0-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21z"/></svg>GitHub</a>
+    </nav>
+  </footer>
+</div>
+</body>
+</html>
