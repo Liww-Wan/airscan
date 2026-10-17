@@ -178,7 +178,7 @@ li.done .bar i{background:var(--ok)}
 
     <section class="view" id="fail" hidden>
       <h1>Não deu para conectar.</h1>
-      <div class="errbox" role="alert"><span id="fail-msg"></span><small id="fail-hint"></small></div>
+      <div class="errbox" role="alert"><span id="fail-msg"></span><small id="fail-hint"></small><small id="fail-diag"></small></div>
       <div class="actions" style="margin-top:22px"><button class="primary" id="btn-retry">Tentar de novo</button></div>
     </section>
 
@@ -215,6 +215,7 @@ const T={
  unsupported:'Navegador não compatível. Use o Chrome, Edge, Firefox ou Safari atualizado.',
  failed:'Não foi possível conectar.',
  timeout:'A conexão não se completou a tempo.',
+ noRelay:'Nenhum servidor de retransmissão (TURN) respondeu: configure TURN_USER e TURN_PASS no início do script (veja o README).',
  hint:'Isso costuma acontecer quando os aparelhos estão em redes que bloqueiam a conexão direta (comum em 4G/5G e em alguns Wi-Fi). Tente de novo ou use a mesma rede Wi-Fi.',
  preparing:'Preparando…',waiting:'Aguardando o outro aparelho',
  signalDown:'Servidor de encontro indisponível. Tente de novo.',
@@ -259,7 +260,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const dur=s=>s<60?Math.ceil(s)+' s':s<3600?Math.floor(s/60)+' min '+Math.ceil(s%60)+' s':Math.floor(s/3600)+' h '+Math.floor(s%3600/60)+' min';
 const say=(t,warn)=>{$('cs-t').textContent=t;$('ws-t').textContent=t;$('err').textContent=warn?t:''};
 
-let pc=null,dc=null,wake=null,link=null,es=null,poll=null,recheck=null,stream=null,answered=false,tm=null,role='';
+let diag={host:0,srflx:0,relay:0,err:''},iceState='',pc=null,dc=null,wake=null,link=null,es=null,poll=null,recheck=null,stream=null,answered=false,tm=null,role='';
 
 function stopListen(){if(es){es.close();es=null}if(poll){clearInterval(poll);poll=null}recheck=null}
 function stopScan(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('cam').hidden=true}
@@ -275,10 +276,16 @@ function reset(){
   $('paste').value='';$('err').textContent='';say('');
   show('home');
 }
+function diagText(){
+  const st=pc?pc.iceConnectionState:iceState;
+  return 'Diagnóstico — candidatos locais: '+diag.host+' locais, '+diag.srflx+' públicos, '+diag.relay+' de relé · ICE: '+(st||'—')+(diag.err?' · erro: '+diag.err:'');
+}
 function fail(msg,hint){
-  stopListen();stopScan();closePeer();
+  stopListen();stopScan();
+  const dg=diagText(),noRelay=hint&&diag.relay===0;
+  closePeer();
   if(wake){wake.release().catch(()=>{});wake=null}
-  $('fail-msg').textContent=msg||T.failed;$('fail-hint').textContent=hint||'';
+  $('fail-msg').textContent=msg||T.failed;$('fail-hint').textContent=(hint||'')+(noRelay?' '+T.noRelay:'');$('fail-diag').textContent=hint?dg:'';
   show('fail');
 }
 
@@ -343,10 +350,13 @@ function armTimeout(){
   tm=setTimeout(()=>{if(!dc||dc.readyState!=='open')fail(T.timeout,T.hint)},CONNECT_TIMEOUT);
 }
 function newPeer(){
+  diag={host:0,srflx:0,relay:0,err:''};iceState='';
   pc=new RTCPeerConnection({iceServers:ICE_SERVERS});
+  pc.onicecandidate=e=>{if(e.candidate){const m=/ typ (host|srflx|relay)/.exec(e.candidate.candidate);if(m)diag[m[1]]++}};
+  pc.onicecandidateerror=e=>{if(e.errorCode>=400||e.errorCode===701)diag.err=(e.errorCode||'')+' '+String(e.url||'').split('?')[0]};
   const bad=()=>{if(!dc||dc.readyState!=='open')fail(T.failed,T.hint)};
   pc.onconnectionstatechange=()=>{if(pc&&pc.connectionState==='failed')bad()};
-  pc.oniceconnectionstatechange=()=>{if(pc&&pc.iceConnectionState==='failed')bad()};
+  pc.oniceconnectionstatechange=()=>{if(pc){iceState=pc.iceConnectionState;if(iceState==='failed')bad()}};
 }
 const gathered=()=>new Promise(res=>{
   if(pc.iceGatheringState==='complete')return res();
