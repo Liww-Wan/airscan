@@ -124,7 +124,8 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
       <tr><th>Peça</th><th>Função</th></tr>
       <tr><td>Interface</td><td>HTML, CSS e JS puro. Textos da interface na constante <code>T</code>.</td></tr>
       <tr><td>Sinalização</td><td>Tópico no <code>ntfy.sh</code> (constante <code>SIGNAL</code>) para trocar a oferta e a resposta WebRTC.</td></tr>
-      <tr><td>STUN</td><td><code>stun:stun.l.google.com:19302</code>, só para descobrir o endereço público.</td></tr>
+      <tr><td>STUN</td><td>Três servidores (Google e Cloudflare), só para descobrir o endereço público.</td></tr>
+      <tr><td>TURN</td><td>Retransmissor usado apenas quando a conexão direta é impossível. Configurado nas constantes <code>TURN_USER</code> e <code>TURN_PASS</code> (conta gratuita em metered.ca); sem elas, usa um relé público de teste.</td></tr>
       <tr><td>Canal de dados</td><td><code>RTCDataChannel</code> chamado <code>arquivos</code>, binário e confiável.</td></tr>
       <tr><td>Armazenamento</td><td>File System Access API, OPFS ou memória, conforme o navegador e o tamanho.</td></tr>
     </table></div>
@@ -134,10 +135,10 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     <h2>Pareamento</h2>
     <p>Dois aparelhos precisam trocar uma oferta e uma resposta SDP antes de abrir o canal direto. O Airscan faz essa troca por um tópico do ntfy, sempre com o conteúdo cifrado.</p>
     <ol>
-      <li><b>A</b> cria o <code>RTCPeerConnection</code> com o STUN e o canal <code>arquivos</code>, gera a oferta e espera a coleta de candidatos ICE (no máximo 4 s).</li>
-      <li><b>A</b> sorteia uma sala (10 caracteres base36) e uma chave AES de 16 bytes. Monta <code>"O" + SDP</code>, comprime, cifra e publica em <code>https://ntfy.sh/passe-&lt;sala&gt;</code>.</li>
-      <li><b>A</b> exibe o link e o QR com a sala e a chave, e passa a escutar o tópico por SSE (<code>/sse</code>).</li>
-      <li><b>B</b> abre o link, lê o QR ou cola o texto. Busca as mensagens da sala (<code>/json?poll=1&amp;since=all</code>), com até 8 tentativas a cada 1,5 s.</li>
+      <li><b>A</b> cria o <code>RTCPeerConnection</code> com os servidores STUN/TURN e o canal <code>arquivos</code>, gera a oferta e espera a coleta de candidatos ICE (no máximo 5 s).</li>
+      <li><b>A</b> sorteia uma sala (10 caracteres base36) e uma chave AES de 16 bytes. Monta <code>"O" + SDP</code>, comprime, cifra e publica em <code>https://ntfy.sh/airscan-&lt;sala&gt;</code>.</li>
+      <li><b>A</b> exibe o link e o QR com a sala e a chave, e passa a escutar o tópico por SSE (<code>/sse?since=all</code>) e, em paralelo, por consulta a cada 2,5 s, que também roda quando a aba volta ao primeiro plano (o SSE costuma cair quando o celular troca de app para enviar o link).</li>
+      <li><b>B</b> abre o link, lê o QR ou cola o texto. Busca as mensagens da sala (<code>/json?poll=1&amp;since=all</code>), com até 20 tentativas a cada 1,5 s.</li>
       <li><b>B</b> decifra a oferta, cria a resposta e publica <code>"A" + SDP</code> cifrado no mesmo tópico.</li>
       <li><b>A</b> recebe a resposta pelo SSE e aplica <code>setRemoteDescription</code>. O canal abre, o SSE é fechado e os dois lados mostram a tela de transferência.</li>
     </ol>
@@ -148,7 +149,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 <pre><code>https://usuario.github.io/airscan/#r=&lt;sala&gt;&amp;k=&lt;chave&gt;</code></pre>
     <div class="tbl"><table>
       <tr><th>Parâmetro</th><th>Conteúdo</th></tr>
-      <tr><td><code>r</code></td><td>Sala: 10 caracteres base36 aleatórios. O tópico do ntfy é <code>passe-&lt;r&gt;</code>.</td></tr>
+      <tr><td><code>r</code></td><td>Sala: 10 caracteres base36 aleatórios. O tópico do ntfy é <code>airscan-&lt;r&gt;</code>.</td></tr>
       <tr><td><code>k</code></td><td>Chave AES-GCM de 16 bytes em base64url.</td></tr>
     </table></div>
     <p>Como o SDP vai pelo ntfy e não pelo QR, o QR carrega só esse link curto. Ele é gerado com <code>qrcode-generator</code> (correção de erro nível L, modo Byte, margem de 4 módulos) e lido pela câmera com <code>jsQR</code>.</p>
@@ -230,7 +231,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
       <li>Os arquivos nunca passam pelo ntfy nem por outro servidor. Ele recebe apenas mensagens de sinalização cifradas.</li>
       <li>A chave fica no fragmento do link (depois do <code>#</code>), que o navegador não envia a servidor algum.</li>
       <li>O ntfy enxerga o nome da sala, o tamanho e o horário das mensagens, mas não o conteúdo.</li>
-      <li>O STUN do Google vê o endereço IP de quem pergunta, para devolver o endereço público.</li>
+      <li>Os servidores STUN veem o endereço IP de quem pergunta, para devolver o endereço público. Se o relé TURN for usado, ele vê o tráfego cifrado (DTLS) e os endereços IP, nunca o conteúdo dos arquivos.</li>
       <li>O link funciona como segredo: quem o tiver pode tentar parear. Compartilhe só com quem você confia e não publique o link nem o QR.</li>
     </ul>
   </section>
@@ -258,7 +259,8 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     <h2>Limites conhecidos</h2>
     <div class="tbl"><table>
       <tr><th>Limite</th><th>Detalhe</th></tr>
-      <tr><td>Sem servidor TURN</td><td>Redes que bloqueiam conexão direta (isolamento de clientes no Wi-Fi, alguns CGNAT e firewalls) podem impedir o pareamento. Tente os dois aparelhos na mesma rede.</td></tr>
+      <tr><td>Redes diferentes</td><td>Entre redes distintas (principalmente 4G/5G com CGNAT) a conexão direta pode ser impossível e é preciso um servidor TURN. Sem credencial própria, o app usa um relé público de teste, que pode estar indisponível. O relé só é usado como último recurso e deixa a transferência mais lenta; o selo de conexão informa “direto” ou “via relé”.</td></tr>
+      <tr><td>Tempo limite</td><td>Se o canal não abrir em 35 s depois da resposta, o app mostra uma mensagem de falha em vez de ficar esperando.</td></tr>
       <tr><td>Telas abertas</td><td>Os dois aparelhos precisam manter o Airscan aberto até o fim.</td></tr>
       <tr><td>Sem retomada</td><td>Se a conexão cair no meio, o arquivo é reenviado do início.</td></tr>
       <tr><td>Um arquivo por vez</td><td>Os arquivos de uma seleção são enviados em fila, e o destino recebe um de cada vez.</td></tr>

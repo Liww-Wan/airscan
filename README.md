@@ -13,7 +13,7 @@ Envio de arquivos grandes entre aparelhos, direto de navegador a navegador (WebR
 1. No aparelho A, toque em **Criar conexão**. Aparecem um QR e um link.
 2. No aparelho B, aponte a câmera para o QR (ou use **Tenho um QR ou link** e **Escanear QR com a câmera**), ou cole o link.
 3. Conectados, os dois lados podem enviar arquivos. Mantenha as duas telas abertas.
-4. Se a conexão cair, toque em **Reconectar** para criar uma nova.
+4. Se a conexão cair, toque em **Tentar de novo** para criar uma nova.
 
 ## Arquivos grandes
 
@@ -23,9 +23,19 @@ Envio de arquivos grandes entre aparelhos, direto de navegador a navegador (WebR
 ## Privacidade e limites
 
 - Para os aparelhos se encontrarem, a conexão é trocada por um serviço público (ntfy.sh, constante `SIGNAL` no início do script) com mensagens criptografadas (AES-GCM). A chave fica após o `#` do link, que o navegador não envia a servidor algum. Os arquivos nunca passam por ele.
-- Com a opção de redes diferentes ligada, o navegador consulta um servidor STUN do Google só para descobrir o endereço público.
-- Não há servidor TURN: redes que bloqueiam conexão direta podem impedir a conexão.
+- O navegador consulta servidores STUN (Google e Cloudflare) só para descobrir o endereço público.
+- Entre redes diferentes (principalmente 4G/5G), a conexão direta pode ser impossível. Para isso existe o servidor TURN, usado só como último recurso (veja abaixo).
 - Todo o texto da interface está na constante `T` no início do script (os textos fixos da página ficam no HTML).
+
+## Conexão entre redes diferentes (TURN)
+
+Se duas pessoas em redes diferentes não conseguem conectar, falta um retransmissor TURN. Para configurar um confiável e gratuito:
+
+1. Crie uma conta grátis em https://dashboard.metered.ca/signup e gere uma credencial TURN.
+2. No `index.html`, preencha as constantes `TURN_USER` e `TURN_PASS` no início do script.
+3. Publique de novo.
+
+Sem credencial própria, o app tenta um relé público de teste, que pode estar indisponível. O relé só entra quando a conexão direta falha; o selo da tela de transferência mostra "direto" ou "via relé". Atenção: a credencial fica visível no código da página (é assim em qualquer site estático), então use uma conta dedicada a este projeto.
 
 ## Licenças
 
