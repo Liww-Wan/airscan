@@ -125,7 +125,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
       <tr><td>Interface</td><td>HTML, CSS e JS puro. Textos da interface na constante <code>T</code>.</td></tr>
       <tr><td>Sinalização</td><td>Tópico no <code>ntfy.sh</code> (constante <code>SIGNAL</code>) para trocar a oferta e a resposta WebRTC.</td></tr>
       <tr><td>STUN</td><td>Três servidores (Google e Cloudflare), só para descobrir o endereço público.</td></tr>
-      <tr><td>TURN</td><td>Retransmissor usado apenas quando a conexão direta é impossível. Configurado nas constantes <code>TURN_USER</code> e <code>TURN_PASS</code> (conta gratuita em metered.ca); sem elas, usa um relé público de teste.</td></tr>
+      <tr><td>TURN</td><td>Retransmissor usado apenas quando a conexão direta é impossível. Configurado nas constantes <code>TURN_USER</code> e <code>TURN_PASS</code> (conta gratuita em metered.ca); sem elas, o app usa só STUN e não conecta entre redes que bloqueiam a conexão direta.</td></tr>
       <tr><td>Canal de dados</td><td><code>RTCDataChannel</code> chamado <code>arquivos</code>, binário e confiável.</td></tr>
       <tr><td>Armazenamento</td><td>File System Access API, OPFS ou memória, conforme o navegador e o tamanho.</td></tr>
     </table></div>
@@ -259,7 +259,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     <h2>Limites conhecidos</h2>
     <div class="tbl"><table>
       <tr><th>Limite</th><th>Detalhe</th></tr>
-      <tr><td>Redes diferentes</td><td>Entre redes distintas (principalmente 4G/5G com CGNAT) a conexão direta pode ser impossível e é preciso um servidor TURN. Sem credencial própria, o app usa um relé público de teste, que pode estar indisponível. O relé só é usado como último recurso e deixa a transferência mais lenta; o selo de conexão informa “direto” ou “via relé”.</td></tr>
+      <tr><td>Redes diferentes</td><td>Entre redes distintas (principalmente 4G/5G com CGNAT) a conexão direta pode ser impossível e é preciso um servidor TURN. Sem credencial própria, o app usa só STUN (o relé público de teste deixou de responder). O relé só é usado como último recurso e deixa a transferência mais lenta; o selo de conexão informa “direto” ou “via relé”.</td></tr>
       <tr><td>Tempo limite</td><td>Se o canal não abrir em 35 s depois da resposta, o app mostra uma mensagem de falha em vez de ficar esperando.</td></tr>
       <tr><td>Telas abertas</td><td>Os dois aparelhos precisam manter o Airscan aberto até o fim.</td></tr>
       <tr><td>Sem retomada</td><td>Se a conexão cair no meio, o arquivo é reenviado do início.</td></tr>
