@@ -282,7 +282,8 @@ function fail(msg,hint){
   show('fail');
 }
 
-if(!window.RTCPeerConnection||!window.CompressionStream||!window.crypto||!crypto.subtle){
+const SUPPORTED=!!(window.RTCPeerConnection&&window.CompressionStream&&window.crypto&&crypto.subtle);
+if(!SUPPORTED){
   $('btn-create').disabled=true;$('btn-join').disabled=true;
   $('home').insertAdjacentHTML('beforeend','<p class="error">'+T.unsupported+'</p>');
 }
@@ -566,7 +567,16 @@ $('paste').addEventListener('keydown',e=>{if(e.key==='Enter')handle($('paste').v
 $('scan').onclick=startScan;
 $('f-gh').href=REPO;
 
-if(/(^|#|&)r=/.test(location.hash)&&/k=/.test(location.hash)){const p=new URLSearchParams(location.hash.slice(1));history.replaceState(null,'',location.pathname);joinLink(p.get('r'),p.get('k'))}
+/* abre o link: ao carregar a página e também quando o link é colado numa aba que já estava aberta (só muda o #, a página não recarrega) */
+function fromHash(){
+  if(!(/(^|#|&)r=/.test(location.hash)&&/k=/.test(location.hash)))return;
+  const p=new URLSearchParams(location.hash.slice(1));
+  history.replaceState(null,'',location.pathname+location.search);
+  if(!SUPPORTED){fail(T.unsupported,'');return}
+  stopListen();stopScan();closePeer();
+  joinLink(p.get('r'),p.get('k')).catch(()=>fail(T.failed,T.hint));
+}
+fromHash();addEventListener('hashchange',fromHash);
 })();
 </script>
 </body>
