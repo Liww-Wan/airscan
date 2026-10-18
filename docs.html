@@ -124,7 +124,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
       <tr><th>Peça</th><th>Função</th></tr>
       <tr><td>Interface</td><td>HTML, CSS e JS puro. Textos da interface na constante <code>T</code>.</td></tr>
       <tr><td>Sinalização</td><td>Tópico no <code>ntfy.sh</code> (constante <code>SIGNAL</code>) para trocar a oferta e a resposta WebRTC.</td></tr>
-      <tr><td>STUN</td><td><code>stun:stun.l.google.com:19302</code>, só para descobrir o endereço público.</td></tr>
+      <tr><td>STUN</td><td><code>stun.l.google.com:19302</code>, <code>stun1.l.google.com:19302</code> e <code>stun.cloudflare.com:3478</code> (constante <code>ICE</code>), só para descobrir o endereço público.</td></tr>
       <tr><td>Canal de dados</td><td><code>RTCDataChannel</code> chamado <code>arquivos</code>, binário e confiável.</td></tr>
       <tr><td>Armazenamento</td><td>File System Access API, OPFS ou memória, conforme o navegador e o tamanho.</td></tr>
     </table></div>
@@ -136,7 +136,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     <ol>
       <li><b>A</b> cria o <code>RTCPeerConnection</code> com o STUN e o canal <code>arquivos</code>, gera a oferta e espera a coleta de candidatos ICE (no máximo 4 s).</li>
       <li><b>A</b> sorteia uma sala (10 caracteres base36) e uma chave AES de 16 bytes. Monta <code>"O" + SDP</code>, comprime, cifra e publica em <code>https://ntfy.sh/passe-&lt;sala&gt;</code>.</li>
-      <li><b>A</b> exibe o link e o QR com a sala e a chave, e passa a escutar o tópico por SSE (<code>/sse</code>).</li>
+      <li><b>A</b> exibe o link e o QR com a sala e a chave, e passa a escutar o tópico por SSE (<code>/sse?since=all</code>, com histórico) e, por garantia, consulta o tópico a cada 6 s. Se o canal não abrir em 30 s depois da troca, o app mostra o erro de conexão.</li>
       <li><b>B</b> abre o link, lê o QR ou cola o texto. Busca as mensagens da sala (<code>/json?poll=1&amp;since=all</code>), com até 8 tentativas a cada 1,5 s.</li>
       <li><b>B</b> decifra a oferta, cria a resposta e publica <code>"A" + SDP</code> cifrado no mesmo tópico.</li>
       <li><b>A</b> recebe a resposta pelo SSE e aplica <code>setRemoteDescription</code>. O canal abre, o SSE é fechado e os dois lados mostram a tela de transferência.</li>
@@ -230,7 +230,7 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
       <li>Os arquivos nunca passam pelo ntfy nem por outro servidor. Ele recebe apenas mensagens de sinalização cifradas.</li>
       <li>A chave fica no fragmento do link (depois do <code>#</code>), que o navegador não envia a servidor algum.</li>
       <li>O ntfy enxerga o nome da sala, o tamanho e o horário das mensagens, mas não o conteúdo.</li>
-      <li>O STUN do Google vê o endereço IP de quem pergunta, para devolver o endereço público.</li>
+      <li>Os servidores STUN (Google e Cloudflare) veem o endereço IP de quem pergunta, para devolver o endereço público.</li>
       <li>O link funciona como segredo: quem o tiver pode tentar parear. Compartilhe só com quem você confia e não publique o link nem o QR.</li>
     </ul>
   </section>
